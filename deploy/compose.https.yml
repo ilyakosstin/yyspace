@@ -1,0 +1,12 @@
+services:
+  gateway:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./deploy/nginx.https.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${HTTPS_CERT_DIR:?Set HTTPS_CERT_DIR}:/run/tls:ro
+      - ${HTTPS_AUTH_DIR:?Set HTTPS_AUTH_DIR}:/run/focus-auth:ro
+    depends_on:
+      - frontend

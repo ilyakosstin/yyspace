@@ -1,0 +1,39 @@
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand({ping: 1}).ok ? 0 : 1)"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+      start_period: 15s
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongo:27017
+      MONGODB_DATABASE: focus_helper
+    networks:
+      - default
+      - database
+    depends_on:
+      mongo:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+networks:
+  database:
+    internal: true
+volumes:
+  mongo_data:
