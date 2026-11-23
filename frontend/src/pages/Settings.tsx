@@ -125,12 +125,32 @@ function Security() {
   );
 }
 
-export function Settings() {
+export function Settings({ username, signOut }: { username: string; signOut: () => Promise<void> }) {
+  const [signingOut, setSigningOut] = useState(false);
+  const [problem, setProblem] = useState("");
+  const leave = async () => {
+    setSigningOut(true);
+    setProblem("");
+    try {
+      await signOut();
+    } catch (error) {
+      setProblem(error instanceof Error ? error.message : "Could not sign out");
+      setSigningOut(false);
+    }
+  };
   return (
     <div className="settings">
       <h1>Settings</h1>
       <Appearance />
       <Security />
+      <section>
+        <h2>Account</h2>
+        <div className="row account-row">
+          <span>Signed in as <strong>{username}</strong></span>
+          <button disabled={signingOut} onClick={leave}>Sign out</button>
+        </div>
+        {problem && <p className="bad-text" role="alert">{problem}</p>}
+      </section>
     </div>
   );
 }

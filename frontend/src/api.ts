@@ -1,7 +1,9 @@
 import { seal } from "./crypto";
 import type { AppState, NewTask, Task, TaskPatch, Timer } from "./types";
 
-async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+export const sessionExpired = "focus:session-expired";
+
+export async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
     method,
     headers: body === undefined ? undefined : { "Content-Type": "application/json" },
@@ -15,6 +17,10 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
     } catch {
       /* non-JSON error body */
     }
+    if (res.status === 401 && path !== "/session") {
+      window.dispatchEvent(new Event(sessionExpired));
+    }
+    if (res.status === 429 && path === "/session") detail = "Too many attempts. Try again in a minute.";
     throw new Error(detail);
   }
   return res.status === 204 ? (undefined as T) : res.json();

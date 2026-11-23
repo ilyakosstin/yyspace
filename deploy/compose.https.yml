@@ -1,4 +1,7 @@
 services:
+  backend:
+    environment:
+      APP_SESSION_SECURE: "true"
   gateway:
     image: nginx:alpine
     restart: unless-stopped
@@ -7,6 +10,5 @@ services:
     volumes:
       - ./deploy/nginx.https.conf:/etc/nginx/conf.d/default.conf:ro
       - ${HTTPS_CERT_DIR:?Set HTTPS_CERT_DIR}:/run/tls:ro
-      - ${HTTPS_AUTH_DIR:?Set HTTPS_AUTH_DIR}:/run/focus-auth:ro
     depends_on:
       - frontend
