@@ -64,7 +64,7 @@ To run the backend separately, start MongoDB locally and run `go run .` in `back
 | `CORS_ORIGINS` | `["http://localhost:5173"]` |
 | `BIN_LIMIT` | `200` (the combined finished history is capped at twice this value) |
 
-Run `go test ./...` in `backend/` and `npm test && npm run build` in `frontend/`. Open `/api/docs` for interactive API documentation. `/healthz` checks the MongoDB connection.
+Run `go test ./...` in `backend/` and `npm test && npm run build` in `frontend/`. Set `MONGODB_TEST_URI` to run the Go API integration test against a temporary database on a MongoDB test server. Open `/api/docs` for interactive API documentation. `/healthz` checks the MongoDB connection.
 
 ## Import an existing SQLite database
 
