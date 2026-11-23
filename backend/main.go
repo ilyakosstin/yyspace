@@ -54,17 +54,29 @@ func run() error {
 	}()
 
 	init, cancel := context.WithTimeout(ctx, 20*time.Second)
-	s, err := openStore(init, client.Database(env("MONGODB_DATABASE", "focus_helper")), binLimit)
-	cancel()
+	defer cancel()
+	db := client.Database(env("MONGODB_DATABASE", "focus_helper"))
+	s, err := openStore(init, db, binLimit)
 	if err != nil {
 		return err
 	}
 	if len(os.Args) == 2 && os.Args[1] == "import" {
 		return s.importLegacy(ctx, os.Stdin)
 	}
+	auth, err := openAuthentication(init, db)
+	if err != nil {
+		return err
+	}
+	v, err := openVault(init, db)
+	if err != nil {
+		return err
+	}
+	cancel()
+	routes := s.routes()
+	v.routes(routes)
 
 	server := &http.Server{
-		Addr: env("HTTP_ADDR", ":8000"), Handler: cors(s.routes(), origins),
+		Addr: env("HTTP_ADDR", ":8000"), Handler: cors(auth.protect(routes), origins),
 		ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 20 * time.Second,
 		WriteTimeout: 25 * time.Second, IdleTimeout: 60 * time.Second,
 	}
@@ -90,7 +102,7 @@ func cors(next http.Handler, origins []string) http.Handler {
 			if slices.Contains(origins, origin) || slices.Contains(origins, "*") {
 				w.Header().Set("Access-Control-Allow-Origin", origin)
 				if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
-					w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+					w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
 					w.Header().Set("Access-Control-Allow-Headers", strings.Join(r.Header.Values("Access-Control-Request-Headers"), ", "))
 					w.WriteHeader(http.StatusNoContent)
 					return

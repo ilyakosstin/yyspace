@@ -1,0 +1,63 @@
+.sign-in {
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background:
+    radial-gradient(ellipse at 15% 12%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 54%),
+    var(--bg);
+}
+
+.sign-in-card {
+  width: min(100%, 420px);
+  padding: clamp(24px, 7vw, 42px);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--card);
+  box-shadow: 0 20px 55px color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.sign-in-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.focus-mark {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.focus-mark::after {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.sign-in-card h1 {
+  margin: 24px 0 4px;
+  font-size: clamp(2.1rem, 8vw, 2.7rem);
+  line-height: 1.1;
+  letter-spacing: -.045em;
+}
+
+.sign-in-card header p { margin: 0; }
+.sign-in-form { display: grid; gap: 8px; margin-top: 24px; }
+.sign-in-form label { display: grid; gap: 6px; font-weight: 550; }
+.sign-in-form label:first-child { margin-bottom: 6px; }
+.sign-in-form input { width: 100%; min-height: 48px; background: var(--bg); }
+.password-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.password-field button { min-width: 60px; }
+.sign-in-form p { margin: 4px 0; }
+.sign-in-form .primary { min-height: 48px; margin-top: 10px; font-weight: 650; }
+.account-row { align-items: center; justify-content: space-between; }

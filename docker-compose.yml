@@ -18,6 +18,9 @@ services:
     environment:
       MONGODB_URI: mongodb://mongo:27017
       MONGODB_DATABASE: focus_helper
+      APP_USERNAME: ${APP_USERNAME:-focus}
+      APP_PASSWORD_HASH: ${APP_PASSWORD_HASH:-}
+      APP_SESSION_SECURE: ${APP_SESSION_SECURE:-false}
     networks:
       - default
       - database
